@@ -22,7 +22,7 @@ fn main() {
                     command::remove_game(args[x].clone());
                 }
             }
-            _ => eprintln!("Invalid args. {}", args[0]),
+            _ => eprintln!("Invalid args."),
         }
     }
 }
