@@ -27,3 +27,6 @@ The above command will add `524220`, `638970` and `1091500` to the list.
 ```bash
 steamdc remove 638970 1091500
 ```
+
+## License
+- [MIT](LICENSE)
