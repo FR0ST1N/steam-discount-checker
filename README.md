@@ -3,7 +3,7 @@ Steam discount checker for CLI.
 
 ## Install
 ```bash
-cargo install --path .
+cargo install --git https://github.com/FR0ST1N/steam-discount-checker.git
 ```
 
 ## Usage
