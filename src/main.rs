@@ -22,6 +22,7 @@ fn main() {
                     command::remove_game(args[x].clone());
                 }
             }
+            "list" => command::show_all_games(),
             _ => eprintln!("Invalid args."),
         }
     }

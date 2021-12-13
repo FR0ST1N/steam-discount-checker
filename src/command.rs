@@ -11,24 +11,14 @@ pub fn show_savings() {
     let mut table = Table::new();
     table.add_row(row!["Name", "Discount %"]);
 
-    let reader = BufReader::new(get_file());
+    let mut games: Vec<Game> = get_games();
 
-    // Get games from api
-    let mut games: Vec<Game> = Vec::new();
-    for line in reader.lines() {
-        let id = line.unwrap();
-
-        match get_data(id.to_string()) {
-            Ok(game) => {
-                if game[0].is_on_sale == "1" {
-                    games.push(game[0].clone());
-                }
-            }
-            Err(..) => {
-                println!("Error Fetching {}.", id)
-            }
-        };
-    }
+    // filter out items not on sale
+    games = games
+        .iter()
+        .filter(|game| game.is_on_sale == "1")
+        .cloned()
+        .collect();
 
     // Sort by savings
     games.sort_by(|l, r| {
@@ -46,6 +36,21 @@ pub fn show_savings() {
     } else {
         println!("No games from your list is currently on sale.");
     }
+}
+
+fn get_games() -> Vec<Game> {
+    let reader = BufReader::new(get_file());
+
+    let mut games: Vec<Game> = Vec::new();
+    for line in reader.lines() {
+        let id = line.unwrap();
+
+        match get_data(id.to_string()) {
+            Ok(game) => games.push(game[0].clone()),
+            Err(..) => println!("Error Fetching {}.", id),
+        };
+    }
+    games
 }
 
 fn get_file() -> File {
@@ -89,13 +94,17 @@ pub fn add_game(id: String) {
 }
 
 pub fn remove_game(id: String) {
-    // Remove id
     let reader = BufReader::new(get_file());
+
+    // Read game list into vec
     let mut games: Vec<String> = Vec::new();
     for line in reader.lines() {
         games.push(line.unwrap());
     }
+
+    // Remove id
     games.retain(|game| game != id.as_str());
+
     // Write to file
     let file_path = get_file_path();
     let mut file = std::fs::OpenOptions::new()
@@ -108,5 +117,19 @@ pub fn remove_game(id: String) {
             panic!("Couldn't write to game list: {}", e);
         }
     }
+
     println!("Removed {}.", id);
+}
+
+pub fn show_all_games() {
+    let mut table = Table::new();
+    table.add_row(row!["ID", "Name"]);
+
+    let games: Vec<Game> = get_games();
+
+    // print list
+    for game in games {
+        table.add_row(row![game.steam_app_id, game.title]);
+    }
+    table.printstd();
 }

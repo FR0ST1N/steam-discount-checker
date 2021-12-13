@@ -6,6 +6,8 @@ pub struct Game {
     pub title: String,
     pub savings: String,
     pub is_on_sale: String,
+    #[serde(rename(deserialize = "steamAppID"))]
+    pub steam_app_id: String,
 }
 
 pub fn get_data(steam_app_id: String) -> Result<Vec<Game>, Box<dyn std::error::Error>> {
