@@ -1,11 +1,9 @@
 use crate::steam_api::{get_data, Game};
 use prettytable::Table;
 use std::{
-    fs::File,
+    fs::{create_dir_all, File},
     io::{BufRead, BufReader, Write},
 };
-
-const FILE_NAME: &str = "/steamdc.list";
 
 pub fn show_savings() {
     let mut table = Table::new();
@@ -63,12 +61,19 @@ fn get_file() -> File {
 }
 
 fn get_file_path() -> String {
-    dirs_next::config_dir()
+    let file_name = "games";
+    let dir = dirs_next::data_local_dir()
         .unwrap()
         .into_os_string()
         .into_string()
         .unwrap()
-        + FILE_NAME
+        + "/steamdc";
+    // create dir if it does not exist
+    match create_dir_all(dir.to_string()) {
+        Ok(..) => (),
+        Err(..) => panic!("Error creating steamdc directory."),
+    };
+    dir + "/" + file_name
 }
 
 pub fn add_game(id: String) {
